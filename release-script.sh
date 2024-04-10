@@ -1,11 +1,11 @@
 #!/bin/bash
-VERSION=15.0.9
 packageJsonData=$(cat package.json)
 topLevelPackageVersion=$(echo "$packageJsonData" | jq -r '.version')
 if [[ $topLevelPackageVersion != $VERSION ]]
 then
     npx -p replace-json-property rjp ./package.json version $VERSION
 fi
+
 
 folder_names=()
 directory="libs"
