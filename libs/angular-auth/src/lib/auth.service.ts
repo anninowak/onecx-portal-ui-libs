@@ -1,5 +1,6 @@
 export interface AuthService {
   init(config?: Record<string, unknown>): Promise<boolean>
+  init(config?: Record<string, unknown>): Promise<boolean>
 
   getHeaderValues(): Record<string, string>
 
