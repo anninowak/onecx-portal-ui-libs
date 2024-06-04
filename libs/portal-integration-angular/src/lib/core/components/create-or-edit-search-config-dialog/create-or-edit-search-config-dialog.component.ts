@@ -25,11 +25,11 @@ export class CreateOrEditSearchConfigDialogComponent
     DialogButtonClicked<CreateOrEditSearchConfigDialogComponent>
 {
   @Input()
-  set searchConfigName(value: string | undefined){
+  set searchConfigName(value: string | undefined) {
     this.searchConfigFormGroup.controls['searchConfigName'].setValue(value)
   }
   get searchConfigName(): string | undefined {
-    return  this.searchConfigFormGroup.controls['searchConfigName'].value
+    return this.searchConfigFormGroup.controls['searchConfigName'].value
   }
 
   @Input()
@@ -47,7 +47,7 @@ export class CreateOrEditSearchConfigDialogComponent
   get saveColumns(): boolean | undefined {
     return this.searchConfigFormGroup.controls['saveColumns'].value
   }
-  
+
   @Output() primaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
 
   searchConfigFormGroup: FormGroup = new FormGroup({
