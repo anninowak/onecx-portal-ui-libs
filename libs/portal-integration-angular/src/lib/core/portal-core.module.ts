@@ -132,12 +132,12 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     {
       provide: TRANSLATION_PATH,
       useValue: './onecx-portal-lib/assets/i18n/',
-      multi: true
+      multi: true,
     },
     {
       provide: TRANSLATION_PATH,
       useValue: './onecx-portal-lib/assets/i18n/primeng/',
-      multi: true
+      multi: true,
     },
     {
       provide: MessageService,
