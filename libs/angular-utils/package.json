@@ -9,7 +9,11 @@
     "@ngx-translate/http-loader": "^8.0.0",
     "@onecx/accelerator": "^5.31.0",
     "@onecx/angular-integration-interface": "^5.31.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "@onecx/integration-interface": "5.31.0",
+    "@primeng/themes": "^19.0.5",
+    "primeng": "^18.0.2",
+    "@angular/platform-browser": "^18.2.12"
   },
   "publishConfig": {
     "access": "public"
