@@ -10,6 +10,7 @@ export * from './lib/utils/has-permission-checker-factory'
 // Services
 export * from './lib/services/translation-cache.service'
 export * from './lib/services/theme-config.service'
+export * from './lib/services/create-color-palette'
 
 // Theme
 export * from './lib/theme/application-config'
