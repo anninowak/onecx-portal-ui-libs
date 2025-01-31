@@ -1,29 +1,42 @@
 import { TestBed } from '@angular/core/testing'
 import { CreateColorPaletteService } from './create-color-palette'
 describe('CreateColorPaletteService', () => {
-  // How to execute the test: nx run angular-utils:test --testFile=/add-file-path
   let createColorPaletteService: CreateColorPaletteService
-  const primary500 = '#3498db'
+  const primaryColor = '#3498db'
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [{ provide: 'primary500', useValue: primary500 }, CreateColorPaletteService],
+      providers: [CreateColorPaletteService],
     })
-    createColorPaletteService = TestBed.inject(CreateColorPaletteService)
+    createColorPaletteService = new CreateColorPaletteService()
   })
 
+  const cyanColorPalette = {
+    50: '#ecfeff',
+    100: '#cffafe',
+    200: '#a5f3fc',
+    300: '#67e8f9',
+    400: '#22d3ee',
+    500: '#06b6d4',
+    600: '#0891b2',
+    700: '#0e7490',
+    800: '#155e75',
+    900: '#164e63',
+    950: '#083344',
+  }
+  // How to execute the test: nx run angular-utils:test --testFile=/add-file-path
   it('should be created', () => {
     expect(createColorPaletteService).toBeTruthy()
   })
+
   it('should adjust color correctly', () => {
-    const color = '#3498db'
-    const amount = 50
-    // TODO: test here the adjustColor function
-    // expect(adjustedColor).toBe('#'); // Expected adjusted color
+    const primaryColor = cyanColorPalette[500]
+    let adjustedColor = createColorPaletteService.adjustColor(primaryColor, 25)
+    expect(adjustedColor).toEqual(cyanColorPalette[400])
   })
 
   it('should create a correct color palette', () => {
-    const palette = createColorPaletteService.createPalette()
+    const palette = createColorPaletteService.createPalette(primaryColor)
     expect(palette[0]).toBe('#fcffff')
     expect(palette[50]).toBe('#caffff')
     expect(palette[100]).toBe('#98fcff')

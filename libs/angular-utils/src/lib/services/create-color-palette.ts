@@ -4,16 +4,10 @@ import { Inject, Injectable } from '@angular/core'
   providedIn: 'root',
 })
 export class CreateColorPaletteService {
-  primaryColor: string
-
-  constructor(@Inject('primary500') primary500: string) {
-    this.primaryColor = primary500
-  }
-
   // Function to lighten or darken a color
   // color: A string representing the color in hexadecimal format
   // amount: A number indicating how much to lighten or darken the color. Positive values lighten the color, while negative values darken it.
-  private adjustColor(color: string, amount: number): string {
+  adjustColor(color: string, amount: number): string {
     let colorBeginsWithHash = false
 
     if (color[0] === '#') {
@@ -41,36 +35,22 @@ export class CreateColorPaletteService {
     return (colorBeginsWithHash ? '#' : '') + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')
   }
 
-  public createPalette(): { [key: number]: string } {
+  public createPalette(primaryColor: string): { [key: number]: string } {
     const palette = {
-      0: this.adjustColor(this.primaryColor, 200),
-      50: this.adjustColor(this.primaryColor, 150),
-      100: this.adjustColor(this.primaryColor, 100),
-      200: this.adjustColor(this.primaryColor, 75),
-      300: this.adjustColor(this.primaryColor, 50),
-      400: this.adjustColor(this.primaryColor, 25),
-      500: this.primaryColor,
-      600: this.adjustColor(this.primaryColor, -25),
-      700: this.adjustColor(this.primaryColor, -50),
-      800: this.adjustColor(this.primaryColor, -75),
-      900: this.adjustColor(this.primaryColor, -100),
+      0: this.adjustColor(primaryColor, 200),
+      50: this.adjustColor(primaryColor, 150),
+      100: this.adjustColor(primaryColor, 100),
+      200: this.adjustColor(primaryColor, 75),
+      300: this.adjustColor(primaryColor, 50),
+      400: this.adjustColor(primaryColor, 25),
+      500: primaryColor,
+      600: this.adjustColor(primaryColor, -25),
+      700: this.adjustColor(primaryColor, -50),
+      800: this.adjustColor(primaryColor, -75),
+      900: this.adjustColor(primaryColor, -100),
+      950: this.adjustColor(primaryColor, -125),
     }
 
     return palette
   }
 }
-
-// tested example output:
-// : {
-//     "0": "#fcffff",
-//     "50": "#caffff",
-//     "100": "#98fcff",
-//     "200": "#7fe3ff",
-//     "300": "#66caff",
-//     "400": "#4db1f4",
-//     "500": "#3498db",
-//     "600": "#1b7fc2",
-//     "700": "#0266a9",
-//     "800": "#004d90",
-//     "900": "#003477"
-//   }
