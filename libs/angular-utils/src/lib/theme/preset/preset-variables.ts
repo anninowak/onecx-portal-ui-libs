@@ -49,7 +49,7 @@ export default {
       },
       transitionDuration: '{transition.duration}',
     },
-    // INFO: Used for lists in all select and list components (except for tree select and menus)
+    // INFO: Lists in all select and list components (except for tree select and menus)
     list: {
       // INFO: List container doesn't seem to have padding in our apps
       // padding: '0.25rem 0.25rem',
@@ -304,6 +304,47 @@ export default {
             borderColor: '{surface.200}',
             // INFO: --text-color used
             color: '{text.color}',
+          },
+        },
+        // INFO: Lists in all select and list components (except for tree select and menus)
+        list: {
+          option: {
+            // INFO: --input-list-item-hover-bg used
+            // INFO: Could be focusBackground: 'rgba(0, 0, 0, 0.04)'
+            focusBackground: '{surface.100}',
+            // INFO: --highlight-bg used
+            // TODO: Should we use some variable from our theme configurator?
+            selectedBackground: '{highlight.background}',
+            // INFO: --highlight-bg used
+            // TODO: Should we use some variable from our theme configurator?
+            selectedFocusBackground: '{highlight.focus.background}',
+            // INFO: --text-color used
+            color: '{text.color}',
+            // INFO: --text-color used
+            // TODO: Maybe it makes sense to leave hover color?
+            focusColor: '{text.hover.color}',
+            // INFO: --primary-color used
+            // selectedColor: '{highlight.color}',
+            selectedColor: themevariables.general.primaryColor,
+            // INFO: --primary-color used
+            // selectedFocusColor: '{highlight.focus.color}',
+            selectedFocusColor: themevariables.general.primaryColor,
+            icon: {
+              // INFO: --text-secondary-color used
+              // TODO: Decide on secondary color or surface
+              color: '{surface.400}',
+              // INFO: --text-secondary-color used
+              // TODO: Decide on secondary color or surface
+              focusColor: '{surface.500}',
+            },
+          },
+          optionGroup: {
+            // INFO: --submenu-header-bg used
+            // INFO: Could be background: '#ffffff'
+            background: 'transparent',
+            // INFO: --text-secondary-color used
+            // TODO: Decide on secondary color or text.muted
+            color: '{text.muted.color}',
           },
         },
         // INFO: All menu components
