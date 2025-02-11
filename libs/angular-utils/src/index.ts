@@ -7,11 +7,11 @@ export * from './lib/utils/translate.combined.loader'
 export * from './lib/utils/translation-path-factory.utils'
 export * from './lib/utils/has-permission-checker-factory'
 export * from './lib/utils/deep-merge.utils'
+export * from './lib/utils/create-color-palette'
 
 // Services
 export * from './lib/services/translation-cache.service'
 export * from './lib/services/theme-config.service'
-export * from './lib/services/create-color-palette'
 export * from './lib/services/custom-use-style.service'
 
 // Theme
