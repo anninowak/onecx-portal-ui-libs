@@ -1,4 +1,4 @@
-import themevariables from './default-theme-variables'
+import themevariables from './preset/default-theme-variables'
 export default {
   primitive: {
     borderRadius: {
@@ -396,19 +396,34 @@ export default {
     },
     colorScheme: {
       light: {
-        primary: {
-          0: '',
-          50: '',
-          100: '',
-          200: '',
-          300: '',
-          400: '',
-          500: '#10b981',
-          600: '',
-          700: '',
-          800: '',
-          900: '',
-          950: '',
+        // primary: {
+        //   0: '',
+        //   50: '',
+        //   100: '',
+        //   200: '',
+        //   300: '',
+        //   400: '',
+        //   500: '#10b981',
+        //   600: '',
+        //   700: '',
+        //   800: '',
+        //   900: '',
+        //   950: '',
+        // },
+        surface: {
+          // HINT: will be handled by the colorPalette in the future
+          0: '#ffffff',
+          50: '{slate.50}',
+          100: '{slate.100}',
+          200: '{slate.200}',
+          300: '{slate.300}',
+          400: '{slate.400}',
+          500: '{slate.500}',
+          600: '{slate.600}',
+          700: '{slate.700}',
+          800: '{slate.800}',
+          900: '{slate.900}',
+          950: '{slate.950}',
         },
         primary: {
           color: '{primary.500}',
@@ -418,6 +433,7 @@ export default {
           // if buttonActiveBg is not set, it should be primary.400
         },
         highlight: {
+          // TODO
           background: '{primary.50}',
           focusBackground: '{primary.100}',
           color: '{primary.700}',
