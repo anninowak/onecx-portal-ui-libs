@@ -27,17 +27,17 @@ export function adjustColor(color: string, amount: number): string {
 
 export function createPalette(primaryColor: string): { [key: number]: string } {
   const palette = {
-    50: adjustColor(primaryColor, 275),
-    100: adjustColor(primaryColor, 205),
-    200: adjustColor(primaryColor, 170),
-    300: adjustColor(primaryColor, 90),
+    50: adjustColor(primaryColor, 230),
+    100: adjustColor(primaryColor, 195),
+    200: adjustColor(primaryColor, 150),
+    300: adjustColor(primaryColor, 98),
     400: adjustColor(primaryColor, 20),
     500: primaryColor,
     600: adjustColor(primaryColor, -25),
-    700: adjustColor(primaryColor, -50),
-    800: adjustColor(primaryColor, -75),
-    900: adjustColor(primaryColor, -100),
-    950: adjustColor(primaryColor, -125),
+    700: adjustColor(primaryColor, -65),
+    800: adjustColor(primaryColor, -80),
+    900: adjustColor(primaryColor, -110),
+    950: adjustColor(primaryColor, -140),
   }
 
   return palette
