@@ -13,20 +13,6 @@ const cyanColorPalette = {
   950: '#083344',
 }
 
-const emeraldColorPalette = {
-  50: '#ecfdf5',
-  100: '#d1fae5',
-  200: '#a7f3d0',
-  300: '#6ee7b7',
-  400: '#34d399',
-  500: '#10b981',
-  600: '#059669',
-  700: '#047857',
-  800: '#065f46',
-  900: '#064e3b',
-  950: '#022c22',
-}
-
 const redColorPalette = {
   50: '#fef2f2',
   100: '#fee2e2',
@@ -110,7 +96,6 @@ describe('createPalette', () => {
     const primaryColor = redColorPalette[500]
     const palette = createPalette(primaryColor)
     const maximumDifference = 50
-    const testNumbers = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]
     expect(colorDelta(palette[50], redColorPalette[50])).toBeLessThanOrEqual(maximumDifference)
     expect(colorDelta(palette[100], redColorPalette[100])).toBeLessThanOrEqual(maximumDifference)
     expect(colorDelta(palette[200], redColorPalette[200])).toBeLessThanOrEqual(maximumDifference)
@@ -127,7 +112,6 @@ describe('createPalette', () => {
     const primaryColor = orangeColorPalette[500]
     const palette = createPalette(primaryColor)
     const maximumDifference = 50
-    const testNumbers = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]
     expect(colorDelta(palette[50], orangeColorPalette[50])).toBeLessThanOrEqual(maximumDifference)
     expect(colorDelta(palette[100], orangeColorPalette[100])).toBeLessThanOrEqual(maximumDifference)
     expect(colorDelta(palette[200], orangeColorPalette[200])).toBeLessThanOrEqual(maximumDifference)
@@ -145,7 +129,6 @@ describe('createPalette', () => {
     const primaryColor = greenColorPalette[500]
     const palette = createPalette(primaryColor)
     const maximumDifference = 50
-    const testNumbers = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]
     expect(colorDelta(palette[50], greenColorPalette[50])).toBeLessThanOrEqual(maximumDifference)
     expect(colorDelta(palette[100], greenColorPalette[100])).toBeLessThanOrEqual(maximumDifference)
     expect(colorDelta(palette[200], greenColorPalette[200])).toBeLessThanOrEqual(maximumDifference)
