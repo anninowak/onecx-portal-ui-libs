@@ -396,20 +396,6 @@ export default {
     },
     colorScheme: {
       light: {
-        // primary: {
-        //   0: '',
-        //   50: '',
-        //   100: '',
-        //   200: '',
-        //   300: '',
-        //   400: '',
-        //   500: '#10b981',
-        //   600: '',
-        //   700: '',
-        //   800: '',
-        //   900: '',
-        //   950: '',
-        // },
         surface: {
           // HINT: will be handled by the colorPalette in the future
           0: '#ffffff',

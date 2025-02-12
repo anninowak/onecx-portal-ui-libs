@@ -96,6 +96,16 @@ describe('createPalette', () => {
     const primaryColor = redColorPalette[500]
     const palette = createPalette(primaryColor)
     const maximumDifference = 50
+    const paletteKeys = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+
+    paletteKeys.forEach((key) => {
+      expect(colorDelta(palette[key], redColorPalette[key])).toBeLessThanOrEqual(maximumDifference)
+    })
+  })
+  it('should create a red color palette with adjusted colors', () => {
+    const primaryColor = redColorPalette[500]
+    const palette = createPalette(primaryColor)
+    const maximumDifference = 50
     expect(colorDelta(palette[50], redColorPalette[50])).toBeLessThanOrEqual(maximumDifference)
     expect(colorDelta(palette[100], redColorPalette[100])).toBeLessThanOrEqual(maximumDifference)
     expect(colorDelta(palette[200], redColorPalette[200])).toBeLessThanOrEqual(maximumDifference)
