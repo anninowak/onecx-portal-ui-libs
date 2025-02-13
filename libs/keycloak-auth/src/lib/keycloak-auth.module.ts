@@ -1,11 +1,11 @@
-import { NgModule, ModuleWithProviders, APP_INITIALIZER } from '@angular/core'
+import { NgModule, ModuleWithProviders, APP_INITIALIZER, provideAppInitializer, inject } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { HTTP_INTERCEPTORS } from '@angular/common/http'
-import { AUTH_SERVICE, ConfigurationService } from '@onecx/angular-integration-interface'
+import { AUTH_SERVICE, ConfigurationService, UserService } from '@onecx/angular-integration-interface'
 import { KeycloakAuthService } from './keycloak-auth.service'
-import { KeycloakAngularModule } from 'keycloak-angular'
 import { TokenInterceptor } from './token.interceptor'
 import { KEYCLOAK_AUTH_CONFIG } from './keycloak-injection-token'
+import { KeycloakAngularModule } from 'keycloak-angular'
 
 export interface KeycloakAuthModuleConfig {
   tokenInterceptorWhitelist?: string[]
@@ -29,26 +29,29 @@ function appInitializer(configService: ConfigurationService, authService: Keyclo
       useClass: KeycloakAuthService,
     },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
-    { provide: APP_INITIALIZER, useFactory: appInitializer, deps: [ConfigurationService, AUTH_SERVICE], multi: true },
+    // { provide: APP_INITIALIZER, useFactory: appInitializer, deps: [ConfigurationService, AUTH_SERVICE], multi: true },
+    provideAppInitializer(async () => appInitializer(inject(ConfigurationService), inject(KeycloakAuthService))),
   ],
 })
 export class KeycloakAuthModule {
+  userService: UserService = inject(UserService)
   static withConfig(config: KeycloakAuthModuleConfig): ModuleWithProviders<KeycloakAuthModule> {
     return {
       ngModule: KeycloakAuthModule,
       providers: [
-        {
-          provide: AUTH_SERVICE,
-          useClass: KeycloakAuthService,
-        },
+        // {
+        //   provide: AUTH_SERVICE,
+        //   useClass: KeycloakAuthService,
+        // },
         { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
         { provide: KEYCLOAK_AUTH_CONFIG, useValue: config },
-        {
-          provide: APP_INITIALIZER,
-          useFactory: appInitializer,
-          deps: [ConfigurationService, AUTH_SERVICE],
-          multi: true,
-        },
+        // {
+        //   provide: APP_INITIALIZER,
+        //   useFactory: appInitializer,
+        //   deps: [ConfigurationService, AUTH_SERVICE],
+        //   multi: true,
+        // },
+        provideAppInitializer(async () => appInitializer(inject(ConfigurationService), inject(KeycloakAuthService))),
       ],
     }
   }

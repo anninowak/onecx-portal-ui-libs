@@ -1,27 +1,97 @@
-import { Injectable, inject } from '@angular/core'
+import { ApplicationConfig, Injectable, effect, inject } from '@angular/core'
 import { AppStateService, ConfigurationService, CONFIG_KEY } from '@onecx/angular-integration-interface'
-import { KeycloakEventType, KeycloakOptions, KeycloakService } from 'keycloak-angular'
-import { KeycloakConfig } from 'keycloak-js'
+import {
+  INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
+  IncludeBearerTokenCondition,
+  KEYCLOAK_EVENT_SIGNAL,
+  KeycloakEventType,
+  KeycloakOptions,
+  createInterceptorCondition,
+  includeBearerTokenInterceptor,
+  provideKeycloak,
+} from 'keycloak-angular'
+import Keycloak, { KeycloakConfig, KeycloakInitOptions } from 'keycloak-js'
 import { filter } from 'rxjs'
 import { EventsTopic } from '@onecx/integration-interface'
+import { provideHttpClient, withInterceptors } from '@angular/common/http'
 
 const KC_REFRESH_TOKEN_LS = 'onecx_kc_refreshToken'
 const KC_ID_TOKEN_LS = 'onecx_kc_idToken'
 const KC_TOKEN_LS = 'onecx_kc_token'
 
+const localhostCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
+  urlPattern: /^(http:\/\/localhost:8080)(\/.*)?$/i // for which url should this BearerTokenInterceptor be added?
+});
+
+export const provideKeycloakAngular = () =>
+  provideKeycloak({
+    config: {
+      url: 'keycloak-server-url',
+      realm: 'realm-id',
+      clientId: 'client-id',
+    },
+    // initOptions: {
+    //   onLoad: 'check-sso',
+    //   silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html`
+    // }
+    providers: [
+      {
+        provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
+        useValue: [localhostCondition],
+      },
+    ],
+  })
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideKeycloakAngular(),
+    provideHttpClient(withInterceptors([includeBearerTokenInterceptor]))
+  ]}
+
 @Injectable()
 export class KeycloakAuthService {
-  private keycloakService = inject(KeycloakService);
-  private configService = inject(ConfigurationService);
-  private appStateService = inject(AppStateService);
+  private keycloakService = inject(Keycloak)
+  private readonly keycloakSignal = inject(KEYCLOAK_EVENT_SIGNAL)
+  private configService = inject(ConfigurationService)
+  private appStateService = inject(AppStateService)
 
   private eventsTopic$ = new EventsTopic()
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {
-    this.eventsTopic$.pipe(filter((e) => e.type === 'authentication#logoutButtonClicked')).subscribe(() => this.logout())
+    this.eventsTopic$
+      .pipe(filter((e) => e.type === 'authentication#logoutButtonClicked'))
+      .subscribe(() => this.logout())
+
+    effect(() => {
+      const keycloakEvent = this.keycloakSignal()
+
+      if (keycloakEvent.type === KeycloakEventType.AuthSuccess) {
+        if (this.keycloakService.token) {
+          localStorage.setItem(KC_TOKEN_LS, this.keycloakService.token)
+        } else {
+          localStorage.removeItem(KC_TOKEN_LS)
+        }
+        if (this.keycloakService.idToken) {
+          localStorage.setItem(KC_ID_TOKEN_LS, this.keycloakService.idToken)
+        } else {
+          localStorage.removeItem(KC_ID_TOKEN_LS)
+        }
+        if (this.keycloakService.refreshToken) {
+          localStorage.setItem(KC_REFRESH_TOKEN_LS, this.keycloakService.refreshToken)
+        } else {
+          localStorage.removeItem(KC_REFRESH_TOKEN_LS)
+        }
+      }
+
+      if (keycloakEvent.type === KeycloakEventType.AuthLogout) {
+        console.log('SSO logout nav to root')
+        this.clearKCStateFromLocalstorage()
+        this.keycloakService.login()
+      }
+    })
   }
 
   public async init(): Promise<boolean> {
@@ -52,19 +122,19 @@ export class KeycloakAuthService {
 
     const enableSilentSSOCheck = this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO) === 'true'
 
-    const kcOptions: KeycloakOptions = {
-      loadUserProfileAtStartUp: false,
-      config: kcConfig,
-      initOptions: {
-        onLoad: 'check-sso',
-        checkLoginIframe: false,
-        silentCheckSsoRedirectUri: enableSilentSSOCheck ? this.getSilentSSOUrl() : undefined,
-        idToken: idToken || undefined,
-        refreshToken: refreshToken || undefined,
-        token: token || undefined,
-      },
-      enableBearerInterceptor: true,
-      bearerExcludedUrls: ['/assets'],
+    const kcOptions: KeycloakInitOptions = {
+      // loadUserProfileAtStartUp: false,
+      // config: kcConfig,
+
+      onLoad: 'check-sso',
+      checkLoginIframe: false,
+      silentCheckSsoRedirectUri: enableSilentSSOCheck ? this.getSilentSSOUrl() : undefined,
+      idToken: idToken || undefined,
+      refreshToken: refreshToken || undefined,
+      token: token || undefined,
+
+      // enableBearerInterceptor: true,
+      // bearerExcludedUrls: ['/assets'],
     }
 
     return this.keycloakService
