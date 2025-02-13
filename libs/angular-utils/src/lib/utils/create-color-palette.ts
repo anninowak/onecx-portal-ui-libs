@@ -1,6 +1,6 @@
 // color: A string representing the color in hexadecimal format
-// amount: A number indicating how much to lighten or darken the color. Positive values lighten the color, while negative values darken it.
-export function adjustColor(color: string, amount: number): string {
+// channelOffSet: A number indicating how much to lighten or darken the color. Positive values lighten the color, while negative values darken it. Values are possible from -255 to 255
+export function adjustColor(color: string, channelOffSet: number): string {
   let colorBeginsWithHash = false
 
   if (color[0] === '#') {
@@ -10,36 +10,44 @@ export function adjustColor(color: string, amount: number): string {
 
   let num = parseInt(color, 16)
 
-  let r = (num >> 16) + amount
+  let r = (num >> 16) + channelOffSet
   if (r > 255) r = 255
   else if (r < 0) r = 0
 
-  let g = ((num >> 8) & 0x00ff) + amount
+  let g = ((num >> 8) & 0x00ff) + channelOffSet
   if (g > 255) g = 255
   else if (g < 0) g = 0
 
-  let b = (num & 0x0000ff) + amount
+  let b = (num & 0x0000ff) + channelOffSet
   if (b > 255) b = 255
   else if (b < 0) b = 0
 
   return (colorBeginsWithHash ? '#' : '') + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')
 }
 
-export function createPalette(primaryColor: string): { [key: number]: string } {
-  const palette = {
-    50: adjustColor(primaryColor, 230),
-    100: adjustColor(primaryColor, 195),
-    200: adjustColor(primaryColor, 150),
-    300: adjustColor(primaryColor, 98),
-    400: adjustColor(primaryColor, 20),
-    500: primaryColor,
-    600: adjustColor(primaryColor, -25),
-    700: adjustColor(primaryColor, -65),
-    800: adjustColor(primaryColor, -80),
-    900: adjustColor(primaryColor, -110),
-    950: adjustColor(primaryColor, -140),
-  }
+export const standardColorAdjustment: ColorAdjustment = {
+  50: 210,
+  100: 195,
+  200: 150,
+  300: 98,
+  400: 20,
+  500: 0,
+  600: -25,
+  700: -65,
+  800: -80,
+  900: -110,
+  950: -140,
+}
 
+export interface ColorAdjustment {
+  [key: number]: number
+}
+export function createPalette(primaryColor: string, adjustments: ColorAdjustment): { [key: number]: string } {
+  const palette: { [key: number]: string } = {}
+  Object.keys(adjustments).forEach((key) => {
+    const entry = parseInt(key, 10)
+    palette[entry] = adjustColor(primaryColor, adjustments[entry])
+  })
   return palette
 }
 

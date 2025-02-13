@@ -1,5 +1,6 @@
-import { adjustColor } from '../../utils/create-color-palette'
+import { adjustColor, createPalette } from '../../utils/create-color-palette'
 
+const primaryDefaultColor = '#0D3650'
 export default {
   semantic: {
     // OneCX semantic variables extension
@@ -17,19 +18,8 @@ export default {
     disabledOpacity: '0.6',
     iconSize: '1rem',
     anchorGutter: '2px',
-    primaryDefaultColor: '#0D3650',
     primary: {
-      50: adjustColor('$primaryDefaultColor', 230),
-      100: adjustColor('$primaryDefaultColor', 195),
-      200: adjustColor('$primaryDefaultColor', 150),
-      300: adjustColor('$primaryDefaultColor', 98),
-      400: adjustColor('$primaryDefaultColor', 20),
-      500: '$primaryDefaultColor',
-      600: adjustColor('$primaryDefaultColor', -25),
-      700: adjustColor('$primaryDefaultColor', -65),
-      800: adjustColor('$primaryDefaultColor', -80),
-      900: adjustColor('$primaryDefaultColor', -110),
-      950: adjustColor('$primaryDefaultColor', -140),
+      ...createPalette(primaryDefaultColor),
     },
     formField: {
       // INFO: --input-padding from dev env has equal values 0.75rem 0.75rem
