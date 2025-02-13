@@ -1,4 +1,4 @@
-import { adjustColor, createPalette } from '../utils/create-color-palette'
+import { createPalette, standardColorAdjustment } from '../utils/create-color-palette'
 
 interface ThemeVariables {
   [key: string]: {
@@ -13,12 +13,12 @@ export default class ThemeConfig {
     return {
       semantic: {
         primary: {
-          ...createPalette(primaryColor),
+          ...createPalette(primaryColor, standardColorAdjustment),
         },
         colorScheme: {
           light: {
             primary: {
-              ...createPalette(primaryColor),
+              ...createPalette(primaryColor, standardColorAdjustment),
             },
             text: {
               color: (this.themeVariables as any)['general']['text-color'],
@@ -27,12 +27,6 @@ export default class ThemeConfig {
             content: {
               background: (this.themeVariables as any)['general']['content-bg-color'],
               hoverBackground: (this.themeVariables as any)['general']['hover-bg-color'],
-            },
-            list: {
-              option: {
-                selectedColor: '{primary.500}',
-                selectedFocusColor: '{primary.500}',
-              },
             },
           },
         },

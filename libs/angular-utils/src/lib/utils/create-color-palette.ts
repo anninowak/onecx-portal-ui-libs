@@ -1,5 +1,30 @@
-// color: A string representing the color in hexadecimal format
-// channelOffSet: A number indicating how much to lighten or darken the color. Positive values lighten the color, while negative values darken it. Values are possible from -255 to 255
+export interface ColorAdjustment {
+  [key: number]: number
+}
+
+export const standardColorAdjustment: ColorAdjustment = {
+  50: 210,
+  100: 195,
+  200: 150,
+  300: 98,
+  400: 20,
+  500: 0,
+  600: -25,
+  700: -65,
+  800: -80,
+  900: -110,
+  950: -140,
+}
+
+/**
+ * Adjusts the color by lightening or darkening it based on the provided offset.
+ *
+ * @param {string} color - A string representing the color in hexadecimal format (e.g., "#RRGGBB").
+ * @param {number} channelOffset - A number indicating how much to lighten or darken the color.
+ *                                 Positive values lighten the color, while negative values darken it.
+ *                                 Valid values range from -255 to 255.
+ * @returns {string} - The adjusted color in hexadecimal format.
+ */
 export function adjustColor(color: string, channelOffSet: number): string {
   let colorBeginsWithHash = false
 
@@ -25,23 +50,6 @@ export function adjustColor(color: string, channelOffSet: number): string {
   return (colorBeginsWithHash ? '#' : '') + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')
 }
 
-export const standardColorAdjustment: ColorAdjustment = {
-  50: 210,
-  100: 195,
-  200: 150,
-  300: 98,
-  400: 20,
-  500: 0,
-  600: -25,
-  700: -65,
-  800: -80,
-  900: -110,
-  950: -140,
-}
-
-export interface ColorAdjustment {
-  [key: number]: number
-}
 export function createPalette(primaryColor: string, adjustments: ColorAdjustment): { [key: number]: string } {
   const palette: { [key: number]: string } = {}
   Object.keys(adjustments).forEach((key) => {
@@ -51,7 +59,13 @@ export function createPalette(primaryColor: string, adjustments: ColorAdjustment
   return palette
 }
 
-// Calculates the Euclidean distance between two colors in RGB space
+/**
+ * Calculates the Euclidean distance between two colors in RGB space.
+ *
+ * @param {string} color1 - A string representing the first color in hexadecimal format (e.g., "#RRGGBB").
+ * @param {string} color2 - A string representing the second color in hexadecimal format (e.g., "#RRGGBB").
+ * @returns {number} - The Euclidean distance between the two colors.
+ */
 export function colorDelta(color1: string, color2: string): number {
   function hexToRgb(hex: string): { r: number; g: number; b: number } {
     let color = hex.startsWith('#') ? hex.slice(1) : hex
@@ -65,7 +79,6 @@ export function colorDelta(color1: string, color2: string): number {
   let rgb1 = hexToRgb(color1)
   let rgb2 = hexToRgb(color2)
 
-  // Calculate the Euclidean distance
   let delta = Math.sqrt(Math.pow(rgb1.r - rgb2.r, 2) + Math.pow(rgb1.g - rgb2.g, 2) + Math.pow(rgb1.b - rgb2.b, 2))
 
   return delta
