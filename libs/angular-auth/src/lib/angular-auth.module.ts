@@ -57,7 +57,7 @@ function appInitializer(configService: ConfigurationService, authService: AuthSe
 }
 
 function provideAuthServices() {
-  return [AuthServiceWrapper, KeycloakAuthService, Keycloak]
+  return [AuthServiceWrapper, KeycloakAuthService]
 }
 
 export function provideAuthService() {

@@ -12,7 +12,7 @@ const KC_TOKEN_LS = 'onecx_kc_token'
 @Injectable()
 export class KeycloakAuthService implements AuthService {
   private keycloakService = inject(Keycloak)
-  private readonly keycloakSignal = inject(KEYCLOAK_EVENT_SIGNAL)
+  // private readonly keycloakSignal = inject(KEYCLOAK_EVENT_SIGNAL)
   private configService = inject(ConfigurationService)
 
   kcConfig?: Record<string, unknown>
@@ -21,33 +21,31 @@ export class KeycloakAuthService implements AuthService {
   constructor(...args: unknown[])
 
   constructor() {
-    effect(() => {
-      const keycloakEvent = this.keycloakSignal()
-
-      if (keycloakEvent.type === KeycloakEventType.AuthSuccess) {
-        if (this.keycloakService.token) {
-          localStorage.setItem(KC_TOKEN_LS, this.keycloakService.token)
-        } else {
-          localStorage.removeItem(KC_TOKEN_LS)
-        }
-        if (this.keycloakService.idToken) {
-          localStorage.setItem(KC_ID_TOKEN_LS, this.keycloakService.idToken)
-        } else {
-          localStorage.removeItem(KC_ID_TOKEN_LS)
-        }
-        if (this.keycloakService.refreshToken) {
-          localStorage.setItem(KC_REFRESH_TOKEN_LS, this.keycloakService.refreshToken)
-        } else {
-          localStorage.removeItem(KC_REFRESH_TOKEN_LS)
-        }
-      }
-
-      if (keycloakEvent.type === KeycloakEventType.AuthLogout) {
-        console.log('SSO logout nav to root')
-        this.clearKCStateFromLocalstorage()
-        this.keycloakService.login()
-      }
-    })
+    // effect(() => {
+    //   const keycloakEvent = this.keycloakSignal()
+    //   if (keycloakEvent.type === KeycloakEventType.AuthSuccess) {
+    //     if (this.keycloakService.token) {
+    //       localStorage.setItem(KC_TOKEN_LS, this.keycloakService.token)
+    //     } else {
+    //       localStorage.removeItem(KC_TOKEN_LS)
+    //     }
+    //     if (this.keycloakService.idToken) {
+    //       localStorage.setItem(KC_ID_TOKEN_LS, this.keycloakService.idToken)
+    //     } else {
+    //       localStorage.removeItem(KC_ID_TOKEN_LS)
+    //     }
+    //     if (this.keycloakService.refreshToken) {
+    //       localStorage.setItem(KC_REFRESH_TOKEN_LS, this.keycloakService.refreshToken)
+    //     } else {
+    //       localStorage.removeItem(KC_REFRESH_TOKEN_LS)
+    //     }
+    //   }
+    //   if (keycloakEvent.type === KeycloakEventType.AuthLogout) {
+    //     console.log('SSO logout nav to root')
+    //     this.clearKCStateFromLocalstorage()
+    //     this.keycloakService.login()
+    //   }
+    // })
   }
 
   public async init(config?: Record<string, unknown>): Promise<boolean> {
