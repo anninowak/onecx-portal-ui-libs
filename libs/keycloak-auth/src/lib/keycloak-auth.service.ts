@@ -1,52 +1,16 @@
-import { ApplicationConfig, Injectable, effect, inject } from '@angular/core'
-import { AppStateService, ConfigurationService, CONFIG_KEY } from '@onecx/angular-integration-interface'
+import { Injectable, effect, inject } from '@angular/core'
+import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
+import { EventsTopic } from '@onecx/integration-interface'
 import {
-  INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
-  IncludeBearerTokenCondition,
   KEYCLOAK_EVENT_SIGNAL,
-  KeycloakEventType,
-  KeycloakOptions,
-  createInterceptorCondition,
-  includeBearerTokenInterceptor,
-  provideKeycloak,
+  KeycloakEventType
 } from 'keycloak-angular'
 import Keycloak, { KeycloakConfig, KeycloakInitOptions } from 'keycloak-js'
 import { filter } from 'rxjs'
-import { EventsTopic } from '@onecx/integration-interface'
-import { provideHttpClient, withInterceptors } from '@angular/common/http'
 
 const KC_REFRESH_TOKEN_LS = 'onecx_kc_refreshToken'
 const KC_ID_TOKEN_LS = 'onecx_kc_idToken'
 const KC_TOKEN_LS = 'onecx_kc_token'
-
-const localhostCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
-  urlPattern: /^(http:\/\/localhost:8080)(\/.*)?$/i // for which url should this BearerTokenInterceptor be added?
-});
-
-export const provideKeycloakAngular = () =>
-  provideKeycloak({
-    config: {
-      url: 'keycloak-server-url',
-      realm: 'realm-id',
-      clientId: 'client-id',
-    },
-    // initOptions: {
-    //   onLoad: 'check-sso',
-    //   silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html`
-    // }
-    providers: [
-      {
-        provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
-        useValue: [localhostCondition],
-      },
-    ],
-  })
-
-export const appConfig: ApplicationConfig = {
-  providers: [
-    provideKeycloakAngular(),
-    provideHttpClient(withInterceptors([includeBearerTokenInterceptor]))
-  ]}
 
 @Injectable()
 export class KeycloakAuthService {
@@ -111,13 +75,15 @@ export class KeycloakAuthService {
       }
     }
 
-    this.setupEventListener()
+    // this.setupEventListener()
 
     // try constructing the KC config from values in env
     let kcConfig: KeycloakConfig | string = this.getValidKCConfig()
-    // If any of the required props is missing, fallback to loading KC conf from file
-    if (!kcConfig.clientId || !kcConfig.realm || !kcConfig.url) {
-      kcConfig = './assets/keycloak.json'
+    
+    if (kcConfig.clientId && kcConfig.realm && kcConfig.url) {
+      this.keycloakService.authServerUrl = kcConfig.url
+      this.keycloakService.realm = kcConfig.realm
+      this.keycloakService.clientId = kcConfig.clientId
     }
 
     const enableSilentSSOCheck = this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO) === 'true'
@@ -146,7 +112,7 @@ export class KeycloakAuthService {
       .then((loginOk) => {
         // this will be false if our silent login did not work
         if (loginOk) {
-          return this.keycloakService.getToken()
+          return this.keycloakService.token
         } else {
           // we want to block bootstrap process now
           return this.keycloakService.login().then(() => 'login')
@@ -181,34 +147,34 @@ export class KeycloakAuthService {
     }
   }
 
-  private setupEventListener() {
-    this.keycloakService.keycloakEvents$.subscribe((ke) => {
-      // we are logged in, get tokens and store them in localstorage
-      if (this.keycloakService.getKeycloakInstance().token) {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        localStorage.setItem(KC_TOKEN_LS, this.keycloakService.getKeycloakInstance().token!)
-      } else {
-        localStorage.removeItem(KC_TOKEN_LS)
-      }
-      if (this.keycloakService.getKeycloakInstance().idToken) {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        localStorage.setItem(KC_ID_TOKEN_LS, this.keycloakService.getKeycloakInstance().idToken!)
-      } else {
-        localStorage.removeItem(KC_ID_TOKEN_LS)
-      }
-      if (this.keycloakService.getKeycloakInstance().refreshToken) {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        localStorage.setItem(KC_REFRESH_TOKEN_LS, this.keycloakService.getKeycloakInstance().refreshToken!)
-      } else {
-        localStorage.removeItem(KC_REFRESH_TOKEN_LS)
-      }
-      if (ke.type === KeycloakEventType.OnAuthLogout) {
-        console.log('SSO logout nav to root')
-        this.clearKCStateFromLocalstorage()
-        this.keycloakService.login()
-      }
-    })
-  }
+  // private setupEventListener() {
+  //   this.keycloakService.keycloakEvents$.subscribe((ke) => {
+  //     // we are logged in, get tokens and store them in localstorage
+  //     if (this.keycloakService.getKeycloakInstance().token) {
+  //       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  //       localStorage.setItem(KC_TOKEN_LS, this.keycloakService.getKeycloakInstance().token!)
+  //     } else {
+  //       localStorage.removeItem(KC_TOKEN_LS)
+  //     }
+  //     if (this.keycloakService.getKeycloakInstance().idToken) {
+  //       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  //       localStorage.setItem(KC_ID_TOKEN_LS, this.keycloakService.getKeycloakInstance().idToken!)
+  //     } else {
+  //       localStorage.removeItem(KC_ID_TOKEN_LS)
+  //     }
+  //     if (this.keycloakService.getKeycloakInstance().refreshToken) {
+  //       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  //       localStorage.setItem(KC_REFRESH_TOKEN_LS, this.keycloakService.getKeycloakInstance().refreshToken!)
+  //     } else {
+  //       localStorage.removeItem(KC_REFRESH_TOKEN_LS)
+  //     }
+  //     if (ke.type === KeycloakEventType.OnAuthLogout) {
+  //       console.log('SSO logout nav to root')
+  //       this.clearKCStateFromLocalstorage()
+  //       this.keycloakService.login()
+  //     }
+  //   })
+  // }
 
   private clearKCStateFromLocalstorage() {
     localStorage.removeItem(KC_ID_TOKEN_LS)

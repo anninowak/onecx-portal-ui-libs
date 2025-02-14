@@ -5,22 +5,20 @@ import { KeycloakConfig, KeycloakInitOptions } from 'keycloak-js'
 import { AuthService } from '../auth.service'
 import Keycloak from 'keycloak-js'
 
-
 const KC_REFRESH_TOKEN_LS = 'onecx_kc_refreshToken'
 const KC_ID_TOKEN_LS = 'onecx_kc_idToken'
 const KC_TOKEN_LS = 'onecx_kc_token'
 
 @Injectable()
 export class KeycloakAuthService implements AuthService {
-  private keycloakService = inject(Keycloak);
+  private keycloakService = inject(Keycloak)
   private readonly keycloakSignal = inject(KEYCLOAK_EVENT_SIGNAL)
-  private configService = inject(ConfigurationService);
-
+  private configService = inject(ConfigurationService)
 
   kcConfig?: Record<string, unknown>
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {
     effect(() => {
@@ -68,11 +66,14 @@ export class KeycloakAuthService implements AuthService {
       }
     }
 
-    this.setupEventListener()
+    // this.setupEventListener()
 
     let kcConfig: KeycloakConfig | string = { ...this.getValidKCConfig(), ...(config ?? {}) }
-    if (!kcConfig.clientId || !kcConfig.realm || !kcConfig.url) {
-      kcConfig = './assets/keycloak.json'
+
+    if (kcConfig.clientId && kcConfig.realm && kcConfig.url) {
+      this.keycloakService.authServerUrl = kcConfig.url
+      this.keycloakService.realm = kcConfig.realm
+      this.keycloakService.clientId = kcConfig.clientId
     }
 
     const enableSilentSSOCheck = this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO) === 'true'
@@ -81,12 +82,12 @@ export class KeycloakAuthService implements AuthService {
       // loadUserProfileAtStartUp: false,
       // config: kcConfig,
       // initOptions: {
-        onLoad: 'check-sso',
-        checkLoginIframe: false,
-        silentCheckSsoRedirectUri: enableSilentSSOCheck ? this.getSilentSSOUrl() : undefined,
-        idToken: idToken || undefined,
-        refreshToken: refreshToken || undefined,
-        token: token || undefined,
+      onLoad: 'check-sso',
+      checkLoginIframe: false,
+      silentCheckSsoRedirectUri: enableSilentSSOCheck ? this.getSilentSSOUrl() : undefined,
+      idToken: idToken || undefined,
+      refreshToken: refreshToken || undefined,
+      token: token || undefined,
       // },
       // enableBearerInterceptor: false,
       // bearerExcludedUrls: ['/assets'],
@@ -131,7 +132,7 @@ export class KeycloakAuthService implements AuthService {
     }
   }
 
-  private setupEventListener() {
+  // private setupEventListener() {
     // this.keycloakService.keycloakEvents$.subscribe((ke) => {
     //   if (this.keycloakService.getKeycloakInstance().token) {
     //     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -157,7 +158,7 @@ export class KeycloakAuthService implements AuthService {
     //     this.keycloakService.login(this.kcConfig)
     //   }
     // })
-  }
+  // }
 
   private clearKCStateFromLocalstorage() {
     localStorage.removeItem(KC_ID_TOKEN_LS)
@@ -185,7 +186,7 @@ export class KeycloakAuthService implements AuthService {
   }
 
   async updateTokenIfNeeded(): Promise<boolean> {
-    if (!(this.keycloakService.authenticated)) {
+    if (!this.keycloakService.authenticated) {
       return this.keycloakService.login(this.kcConfig).then(() => false)
     } else {
       return this.keycloakService.updateToken()

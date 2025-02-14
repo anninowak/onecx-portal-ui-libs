@@ -23,7 +23,7 @@ export class AuthServiceWrapper {
   constructor() {
     this.eventsTopic$
       .pipe(filter((e) => e.type === 'authentication#logoutButtonClicked'))
-      .subscribe(() => this.authService?.logout())
+      .subscribe(() => this.logout())
     window.onecxAngularAuth ??= {}
     window.onecxAngularAuth.authServiceProxy ??= {}
     window.onecxAngularAuth.authServiceProxy.v1 ??= {
@@ -93,5 +93,9 @@ export class AuthServiceWrapper {
       exposedModule: this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_MODULE_NAME) ?? './CustomAuth',
     })
     return module.default as AuthServiceFactory
+  }
+
+  logout(): void {
+    this.authService?.logout()
   }
 }
