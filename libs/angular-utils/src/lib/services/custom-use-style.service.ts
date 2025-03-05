@@ -27,8 +27,8 @@ export class CustomUseStyle extends UseStyle {
       if (scopedStyleId === '' && !(options.name as string).endsWith('-variables')) {
         css = `
         @scope([data-style-id="shell-ui"]) to ([data-style-isolation]) {
-                ${css}
-            }
+          ${css}
+        }
         `
       }
       options = {
